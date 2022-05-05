@@ -42,8 +42,14 @@ async function run() {
             const query = { _id: ObjectId(id) }
             const result = await itemCollaction.deleteOne(query)
             res.send(result)
-
         })
+
+        app.post('/additem', async (req, res) => {
+            const newInventory = req.body
+            const result = await itemCollaction.insertOne(newInventory)
+            res.send(result)
+        })
+
 
 
 
