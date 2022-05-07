@@ -1,5 +1,6 @@
 const express = require('express');;
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 
@@ -15,11 +16,27 @@ app.use(express.json())
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.dci89.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+
+
 async function run() {
     try {
 
         await client.connect()
         const itemCollaction = client.db('warehouseMenagement').collection('items')
+
+
+
+        app.post('/login', async (req, res) => {
+            const user = req.body
+            const accesstoken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+                expiresIn: '1d'
+
+            });
+            res.send(accesstoken)
+        })
+
+
+
 
         app.get('/item', async (req, res) => {
             const query = {}
@@ -38,7 +55,6 @@ async function run() {
         // Delete
         app.delete('/item/:id', async (req, res) => {
             const id = req.params.id;
-            console.log('hello', id);
             const query = { _id: ObjectId(id) }
             const result = await itemCollaction.deleteOne(query)
             res.send(result)
@@ -50,7 +66,16 @@ async function run() {
             res.send(result)
         })
 
+        // myItem
+        app.get('/myitem', async (req, res) => {
+            const email = req.query.email
 
+            const query = { email: email }
+            const cursor = itemCollaction.find(query)
+            const items = await cursor.toArray()
+            console.log(items);
+            res.send(items)
+        })
 
 
 
