@@ -22,9 +22,8 @@ async function run() {
     try {
 
         await client.connect()
-        const itemCollaction = client.db('warehouseMenagement').collection('items')
-
-
+        const itemCollaction = client.db('warehouseMenagement').collection('items');
+        const extraCollaction = client.db('warehouseMenagement').collection('extra');
 
         app.post('/login', async (req, res) => {
             const user = req.body
@@ -79,17 +78,36 @@ async function run() {
         app.put('/update/:id', async (req, res) => {
             const id = req.params.id
             const updatedUser = req.body
-            console.log(updatedUser);
+
             const filter = { id: ObjectId(id) }
             const options = { upsert: true };
             const updatedDoc = {
                 $set: {
                     name: updatedUser.name,
+                    email: updatedUser.email,
+                    desc: updatedUser.desc,
+                    img: updatedUser.img,
+                    price: updatedUser.price,
+                    quantity: updatedUser.quantity,
+                    supplierName: updatedUser.supplierName,
                 }
             }
-            const result = await userCollection.updateOne(filter, updatedDoc, options)
+            console.log(updatedDoc);
+            const result = await itemCollaction.updateOne(filter, updatedDoc, options)
             res.send(result)
         })
+
+
+
+        // extra route 
+
+        app.get('/extra', async (req, res) => {
+            const query = {}
+            const cursor = extraCollaction.find(query)
+            const items = await cursor.toArray()
+            res.send(items)
+        })
+
 
 
 
