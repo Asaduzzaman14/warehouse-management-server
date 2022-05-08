@@ -73,11 +73,23 @@ async function run() {
             const query = { email: email }
             const cursor = itemCollaction.find(query)
             const items = await cursor.toArray()
-            console.log(items);
             res.send(items)
         })
 
-
+        app.put('/update/:id', async (req, res) => {
+            const id = req.params.id
+            const updatedUser = req.body
+            console.log(updatedUser);
+            const filter = { id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    name: updatedUser.name,
+                }
+            }
+            const result = await userCollection.updateOne(filter, updatedDoc, options)
+            res.send(result)
+        })
 
 
 
