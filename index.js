@@ -105,9 +105,8 @@ run().catch(console.dir)
 app.get('/', (req, res) => {
     res.send('server is runing')
 })
-app.get('/heroku', (req, res) => {
-    res.send('heroku is runing')
-})
+
+
 
 app.listen(port, () => {
     console.log('port number ', port);
