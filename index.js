@@ -95,7 +95,26 @@ async function run() {
             console.log(updatedDoc);
             const result = await itemCollaction.updateOne(filter, updatedDoc, options)
             res.send(result)
+
         })
+
+
+        app.patch('/update/:id', async (req, res) => {
+            const id = req.params.id
+            const updatedItem = req.body
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    quantity: updatedItem.total,
+                }
+            }
+            console.log(updatedDoc);
+            const result = await itemCollaction.updateOne(filter, updatedDoc, options)
+            res.send(result)
+
+        })
+
 
 
 
