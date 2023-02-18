@@ -7,16 +7,12 @@ require('dotenv').config();
 const app = express()
 const port = process.env.PORT || 5000
 
-// modelwear
+// middelwear
 app.use(cors())
 app.use(express.json())
 
-
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.dci89.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-
-
 
 async function run() {
     try {
@@ -24,6 +20,8 @@ async function run() {
         await client.connect()
         const itemCollaction = client.db('warehouseMenagement').collection('items');
         const extraCollaction = client.db('warehouseMenagement').collection('extra');
+
+
 
         app.post('/login', async (req, res) => {
             const user = req.body
@@ -33,9 +31,6 @@ async function run() {
             });
             res.send(accesstoken)
         })
-
-
-
 
         app.get('/item', async (req, res) => {
             const query = {}
@@ -68,7 +63,6 @@ async function run() {
         // myItem
         app.get('/myitem', async (req, res) => {
             const email = req.query.email
-
             const query = { email: email }
             const cursor = itemCollaction.find(query)
             const items = await cursor.toArray()
@@ -78,7 +72,6 @@ async function run() {
         app.put('/update/:id', async (req, res) => {
             const id = req.params.id
             const updatedUser = req.body
-
             const filter = { id: ObjectId(id) }
             const options = { upsert: true };
             const updatedDoc = {
@@ -115,20 +108,13 @@ async function run() {
 
         })
 
-
-
-
         // extra route 
-
         app.get('/extra', async (req, res) => {
             const query = {}
             const cursor = extraCollaction.find(query)
             const items = await cursor.toArray()
             res.send(items)
         })
-
-
-
 
     } finally {
 
@@ -137,14 +123,12 @@ async function run() {
 
 run().catch(console.dir)
 
-
-
 app.get('/', (req, res) => {
     res.send('server is runing')
 })
 
-app.get('/heroku', (req, res) => {
-    res.send('heroku is runing')
+app.get('/varcel', (req, res) => {
+    res.send('varcel is runing')
 })
 
 app.listen(port, () => {
