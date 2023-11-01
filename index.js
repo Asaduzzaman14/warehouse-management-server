@@ -3,24 +3,25 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 const app = express();
 
 // middelwear
 app.use(cors());
 app.use(express.json());
+// "myFirstDatabase"
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.dci89.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.dci89.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
 
-async function run() {
+const run = async () => {
   try {
-    await client.connect();
-    const itemCollaction = client.db("warehouseMenagement").collection("items");
+    const db = client.db("warehouseMenagement");
+    const itemCollaction = db.collection("items");
     const extraCollaction = client
       .db("warehouseMenagement")
       .collection("extra");
@@ -123,9 +124,8 @@ async function run() {
     });
   } finally {
   }
-}
-
-run().catch(console.dir);
+};
+run().catch((err) => console.log(err));
 
 app.get("/", (req, res) => {
   res.send("server is runing");
